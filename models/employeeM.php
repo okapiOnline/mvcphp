@@ -69,23 +69,18 @@ class EmployeeModel {
         }
     }
 
-    public function deleteOne($id) {
+   public function deleteOne($id) {
         //$sql = 'delete from employee where EmployeeID = :id';
-        $sql="DELETE from employee as E 
-        inner join contact as C on E.ContactID=C.ContactID 
-        left join employee as EM on E.ManagerID=EM.EmployeeID 
-        left join contact as CM on EM.ContactID=CM.ContactID 
-        
-        where E.EmployeeID=".$id;
-        try{
+        $Employe = EmployeeModel::listOne($id);
+        $sql='DELETE employee , contact FROM employee  INNER JOIN contact WHERE employee.ContactID="'.$Employe->ContactID.'" AND contact.ContactID= "'.$Employe->ContactID.'"';
+        try {
             $dbh = new PDO('mysql:host=localhost;dbname=awd;charset=utf8', 'root', '');
             $stmt=$dbh->prepare($sql);
-            $stmt->bindParam(":id", $id);
-            $stmt->execute();
-            $dbh= null;
-
-        }catch (PDOException $e) {
-            print "Erreur !: " .$e->getMessage(). "<br/>";
+            return $stmt->execute();
+            $dbh = null;
+        } catch (PDOException $e) {
+            print "Erreur !: " . $e->getMessage() . "<br/>";
+            die();
         }
     }
 }
